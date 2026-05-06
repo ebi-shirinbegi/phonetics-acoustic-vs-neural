@@ -1,0 +1,668 @@
+schema: '2.0'
+stages:
+  parse:
+    cmd: pixi run python src/parse_corpus.py
+    deps:
+    - path: corpus_raw/ru-fr_interference/2/RUFRcorr.csv
+      hash: md5
+      md5: cd26f4bd0212e8b58b97bb16ecdb58c8
+      size: 540
+    - path: corpus_raw/ru-fr_interference/2/metadata_RUFR.csv
+      hash: md5
+      md5: c1436dcbae5e46962e5db6c7b26f0043
+      size: 580
+    - path: 
+        corpus_raw/ru-fr_interference/2/wav_et_textgrids/FRcorp_textgrids_only
+      hash: md5
+      md5: 98cc8fdcbac78116e49acac3a4697f1e.dir
+      size: 738316590
+      nfiles: 5929
+    - path: src/parse_corpus.py
+      hash: md5
+      md5: fe9d20180ce7be66d13085a7e20bf48e
+      size: 6978
+    outs:
+    - path: data/features_phonemes.csv
+      hash: md5
+      md5: 3ec0bcb31a49a64c1a8edbad1bb2cdc1
+      size: 1045533
+  clean:
+    cmd: pixi run python src/clean_phonemes.py
+    deps:
+    - path: data/features_phonemes.csv
+      hash: md5
+      md5: 3ec0bcb31a49a64c1a8edbad1bb2cdc1
+      size: 1045533
+    - path: src/clean_phonemes.py
+      hash: md5
+      md5: 469c3e868b11ca9d626c69250f254ac2
+      size: 2630
+    outs:
+    - path: data/features_phonemes_clean.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+  acoustic:
+    cmd: pixi run python src/extract_acoustics.py
+    deps:
+    - path: data/features_phonemes_clean.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+    - path: src/extract_acoustics.py
+      hash: md5
+      md5: 93ebb62f5ee6e019a900096ce2a373a9
+      size: 4837
+    outs:
+    - path: data/features_acoustic.csv
+      hash: md5
+      md5: 0057564388c6ac176c45616f1576c6a7
+      size: 1962494
+  neural:
+    cmd: pixi run python src/extract_neural.py
+    deps:
+    - path: data/features_phonemes_clean.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+    - path: src/extract_neural.py
+      hash: md5
+      md5: 41552e7c82de2465f12cb6e78a0195cb
+      size: 5086
+    outs:
+    - path: data/features_neural_index.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+    - path: data/features_whisper_L06.npz
+      hash: md5
+      md5: f26e2c0ab034b203e1d94c8730df7af1
+      size: 30069010
+    - path: data/features_whisper_L20.npz
+      hash: md5
+      md5: c38ce09f4a29f6f94c12a79373774ae7
+      size: 30069010
+    - path: data/features_xlsr_L03.npz
+      hash: md5
+      md5: b04317257c459705256f5a7cb00547e5
+      size: 30069010
+    - path: data/features_xlsr_L12.npz
+      hash: md5
+      md5: 400cc562fe3e81a6e2a692341ebc4cea
+      size: 30069010
+    - path: data/features_xlsr_L20.npz
+      hash: md5
+      md5: ca9ca0aedf224f4fbaa47419273b0148
+      size: 30069010
+  normalise:
+    cmd: pixi run python src/normalise.py
+    deps:
+    - path: data/features_acoustic.csv
+      hash: md5
+      md5: 0057564388c6ac176c45616f1576c6a7
+      size: 1962494
+    - path: data/features_whisper_L06.npz
+      hash: md5
+      md5: f26e2c0ab034b203e1d94c8730df7af1
+      size: 30069010
+    - path: data/features_whisper_L20.npz
+      hash: md5
+      md5: c38ce09f4a29f6f94c12a79373774ae7
+      size: 30069010
+    - path: data/features_xlsr_L03.npz
+      hash: md5
+      md5: b04317257c459705256f5a7cb00547e5
+      size: 30069010
+    - path: data/features_xlsr_L12.npz
+      hash: md5
+      md5: 400cc562fe3e81a6e2a692341ebc4cea
+      size: 30069010
+    - path: data/features_xlsr_L20.npz
+      hash: md5
+      md5: ca9ca0aedf224f4fbaa47419273b0148
+      size: 30069010
+    - path: src/normalise.py
+      hash: md5
+      md5: 5b0faab366c25d970df8fb942adbe277
+      size: 3110
+    outs:
+    - path: data/features_acoustic_norm.csv
+      hash: md5
+      md5: 6a591cc6c4f0d1b61f396369b3057c5d
+      size: 2386696
+    - path: data/reduced_whisper_L06_pca2.npz
+      hash: md5
+      md5: 04598fc2b158f5b0411d9955fd263c11
+      size: 59002
+    - path: data/reduced_whisper_L06_pca50.npz
+      hash: md5
+      md5: 2bb221c7fbff226053737029d39535d8
+      size: 1468474
+    - path: data/reduced_whisper_L06_umap2.npz
+      hash: md5
+      md5: 388594daa7924f989eef4b65344f83d6
+      size: 59002
+    - path: data/reduced_whisper_L20_pca2.npz
+      hash: md5
+      md5: fac9e42ccd2ef6c03976ba116fafc06d
+      size: 59002
+    - path: data/reduced_whisper_L20_pca50.npz
+      hash: md5
+      md5: a6bc05093933aa50d18d4df1c589a88a
+      size: 1468474
+    - path: data/reduced_whisper_L20_umap2.npz
+      hash: md5
+      md5: 88f5e286a885c6b520d822b90ec8008b
+      size: 59002
+    - path: data/reduced_xlsr_L03_pca2.npz
+      hash: md5
+      md5: 754f69c7ead082ad0253aa1aa5dbd0b1
+      size: 59002
+    - path: data/reduced_xlsr_L03_pca50.npz
+      hash: md5
+      md5: 63d050516b743ce88958f9ca98199208
+      size: 1468474
+    - path: data/reduced_xlsr_L03_umap2.npz
+      hash: md5
+      md5: 0a5467e31ac8d134beb215add38c8fa2
+      size: 59002
+    - path: data/reduced_xlsr_L12_pca2.npz
+      hash: md5
+      md5: 9237e7f78707c30dba4a5f69ba3ce5b5
+      size: 59002
+    - path: data/reduced_xlsr_L12_pca50.npz
+      hash: md5
+      md5: 0d3f468ba0699c8988e77626fcfeb529
+      size: 1468474
+    - path: data/reduced_xlsr_L12_umap2.npz
+      hash: md5
+      md5: 6d72c6c5dea37401a4b4926da2aea8e5
+      size: 59002
+    - path: data/reduced_xlsr_L20_pca2.npz
+      hash: md5
+      md5: 5de18d37936af6a3f412e7d2252c59ca
+      size: 59002
+    - path: data/reduced_xlsr_L20_pca50.npz
+      hash: md5
+      md5: af8eba72c807cd8fcf1c3b9aadc1cd41
+      size: 1468474
+    - path: data/reduced_xlsr_L20_umap2.npz
+      hash: md5
+      md5: f5ac357f73429c6090c7f085807262a2
+      size: 59002
+  analyse_5_1:
+    cmd: pixi run python src/analyse_5_1_acoustic.py
+    deps:
+    - path: data/features_acoustic_norm.csv
+      hash: md5
+      md5: 6a591cc6c4f0d1b61f396369b3057c5d
+      size: 2386696
+    - path: src/analyse_5_1_acoustic.py
+      hash: md5
+      md5: 82c112f165ac9fb151c5667563502a35
+      size: 7408
+    outs:
+    - path: data/section5_summary.csv
+      hash: md5
+      md5: 25a47a816ec09c48ed121b71ddcff8c0
+      size: 9073
+    - path: data/section5_variance.csv
+      hash: md5
+      md5: 79eb9a1845688d58c944cfd5c2776f99
+      size: 1145
+    - path: figures/fig_5_1_boxplots.png
+      hash: md5
+      md5: 2ce64df556df37a1cd2fa031b866db92
+      size: 65417
+    - path: figures/fig_5_1_intraspeaker.png
+      hash: md5
+      md5: 494d87837680b43445a1cba69dad3d6f
+      size: 283081
+    - path: figures/fig_5_1_vowel_chart.png
+      hash: md5
+      md5: 2218ffe2e22e9dfa9c42a80ef20465fe
+      size: 313175
+  analyse_5_2:
+    cmd: pixi run python src/analyse_5_2_neural.py
+    deps:
+    - path: data/features_neural_index.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+    - path: data/features_whisper_L06.npz
+      hash: md5
+      md5: f26e2c0ab034b203e1d94c8730df7af1
+      size: 30069010
+    - path: data/features_whisper_L20.npz
+      hash: md5
+      md5: c38ce09f4a29f6f94c12a79373774ae7
+      size: 30069010
+    - path: data/features_xlsr_L03.npz
+      hash: md5
+      md5: b04317257c459705256f5a7cb00547e5
+      size: 30069010
+    - path: data/features_xlsr_L12.npz
+      hash: md5
+      md5: 400cc562fe3e81a6e2a692341ebc4cea
+      size: 30069010
+    - path: data/features_xlsr_L20.npz
+      hash: md5
+      md5: ca9ca0aedf224f4fbaa47419273b0148
+      size: 30069010
+    - path: data/reduced_whisper_L06_pca2.npz
+      hash: md5
+      md5: 04598fc2b158f5b0411d9955fd263c11
+      size: 59002
+    - path: data/reduced_whisper_L06_umap2.npz
+      hash: md5
+      md5: 388594daa7924f989eef4b65344f83d6
+      size: 59002
+    - path: data/reduced_whisper_L20_pca2.npz
+      hash: md5
+      md5: fac9e42ccd2ef6c03976ba116fafc06d
+      size: 59002
+    - path: data/reduced_whisper_L20_umap2.npz
+      hash: md5
+      md5: 88f5e286a885c6b520d822b90ec8008b
+      size: 59002
+    - path: data/reduced_xlsr_L03_pca2.npz
+      hash: md5
+      md5: 754f69c7ead082ad0253aa1aa5dbd0b1
+      size: 59002
+    - path: data/reduced_xlsr_L03_umap2.npz
+      hash: md5
+      md5: 0a5467e31ac8d134beb215add38c8fa2
+      size: 59002
+    - path: data/reduced_xlsr_L12_pca2.npz
+      hash: md5
+      md5: 9237e7f78707c30dba4a5f69ba3ce5b5
+      size: 59002
+    - path: data/reduced_xlsr_L12_umap2.npz
+      hash: md5
+      md5: 6d72c6c5dea37401a4b4926da2aea8e5
+      size: 59002
+    - path: data/reduced_xlsr_L20_pca2.npz
+      hash: md5
+      md5: 5de18d37936af6a3f412e7d2252c59ca
+      size: 59002
+    - path: data/reduced_xlsr_L20_umap2.npz
+      hash: md5
+      md5: f5ac357f73429c6090c7f085807262a2
+      size: 59002
+    - path: src/analyse_5_2_neural.py
+      hash: md5
+      md5: 9095c82de517b179a5330f381badcf17
+      size: 4842
+    outs:
+    - path: data/section5_2_cosine_ratio.csv
+      hash: md5
+      md5: b706b47f68e305971ef6f3c68587e716
+      size: 263
+    - path: data/section5_2_variance_ratio.csv
+      hash: md5
+      md5: 192968f5cd8f7d43f089dd455fe044bf
+      size: 293
+    - path: figures/fig_5_2_whisper_L06.png
+      hash: md5
+      md5: f22bec498b4c3a65f34ff0e62a238b29
+      size: 1514066
+    - path: figures/fig_5_2_whisper_L20.png
+      hash: md5
+      md5: 10b4e4c006d6fcb78c6d890ccd665e0e
+      size: 953547
+    - path: figures/fig_5_2_xlsr_L03.png
+      hash: md5
+      md5: 91248a9f92d39715f3f1b83a434fa62b
+      size: 1259135
+    - path: figures/fig_5_2_xlsr_L12.png
+      hash: md5
+      md5: 5032ba33089e9692710b4b6a14deaa0d
+      size: 610624
+    - path: figures/fig_5_2_xlsr_L20.png
+      hash: md5
+      md5: 18090ed3fec9990bda623a1a48062732
+      size: 1144490
+  analyse_5_3:
+    cmd: pixi run python src/analyse_5_3_rsm.py
+    deps:
+    - path: data/features_acoustic_norm.csv
+      hash: md5
+      md5: 6a591cc6c4f0d1b61f396369b3057c5d
+      size: 2386696
+    - path: data/features_neural_index.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+    - path: data/features_whisper_L20.npz
+      hash: md5
+      md5: c38ce09f4a29f6f94c12a79373774ae7
+      size: 30069010
+    - path: data/features_xlsr_L12.npz
+      hash: md5
+      md5: 400cc562fe3e81a6e2a692341ebc4cea
+      size: 30069010
+    - path: src/analyse_5_3_rsm.py
+      hash: md5
+      md5: e25a6d28767153b261de38173a82e201
+      size: 3949
+    outs:
+    - path: data/section5_3_mantel.csv
+      hash: md5
+      md5: f7c091bd4f1937bb4e7f8fd34808f092
+      size: 205
+    - path: figures/fig_5_3_rsm.png
+      hash: md5
+      md5: 18a630bef80c494aa1adb70ea7d27846
+      size: 54863
+  analyse_6_1:
+    cmd: pixi run python src/analyse_6_1_groups.py
+    deps:
+    - path: data/features_acoustic_norm.csv
+      hash: md5
+      md5: 6a591cc6c4f0d1b61f396369b3057c5d
+      size: 2386696
+    - path: data/features_neural_index.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+    - path: data/features_whisper_L20.npz
+      hash: md5
+      md5: c38ce09f4a29f6f94c12a79373774ae7
+      size: 30069010
+    - path: data/features_xlsr_L12.npz
+      hash: md5
+      md5: 400cc562fe3e81a6e2a692341ebc4cea
+      size: 30069010
+    - path: src/analyse_6_1_groups.py
+      hash: md5
+      md5: a343870a8678be0543ca1f0dc009ca19
+      size: 5929
+    outs:
+    - path: data/section6_1_acoustic.csv
+      hash: md5
+      md5: 45e399e0af85b5e7c3070a946a549ad6
+      size: 2630
+    - path: data/section6_1_gender.csv
+      hash: md5
+      md5: 05cf9ef4ad422e26197984806bb58701
+      size: 2203
+    - path: data/section6_1_neural.csv
+      hash: md5
+      md5: 135f0b5036e9ddb6f0df8d6a64e10c3a
+      size: 1683
+  analyse_6_2:
+    cmd: pixi run python src/analyse_6_2_distances.py
+    deps:
+    - path: data/features_acoustic_norm.csv
+      hash: md5
+      md5: 6a591cc6c4f0d1b61f396369b3057c5d
+      size: 2386696
+    - path: data/features_neural_index.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+    - path: data/features_whisper_L20.npz
+      hash: md5
+      md5: c38ce09f4a29f6f94c12a79373774ae7
+      size: 30069010
+    - path: data/features_xlsr_L12.npz
+      hash: md5
+      md5: 400cc562fe3e81a6e2a692341ebc4cea
+      size: 30069010
+    - path: src/analyse_6_2_distances.py
+      hash: md5
+      md5: 93ae190498dc66f45a8194a06d15ab15
+      size: 11470
+    outs:
+    - path: data/section6_2_bootstrap.csv
+      hash: md5
+      md5: 1510facb9da54e6f11ec9a0259712148
+      size: 903
+    - path: data/section6_2_cm_acoustic.csv
+      hash: md5
+      md5: e4809bdbe4ff293371cc1f29bbcd95a6
+      size: 300
+    - path: data/section6_2_cm_whisper_L20.csv
+      hash: md5
+      md5: 7a442a15f144103b18711bd75aea87dc
+      size: 270
+    - path: data/section6_2_cm_xlsr_L12.csv
+      hash: md5
+      md5: 8a2571ccdbbc0bb83233434655555a5a
+      size: 271
+    - path: data/section6_2_dms.npz
+      hash: md5
+      md5: bdaf3954b2c506a1a06e74393f416ea4
+      size: 4450
+    - path: data/section6_2_f1_acoustic.csv
+      hash: md5
+      md5: c92af8e94d8556408ca4da130fbfdde6
+      size: 629
+    - path: data/section6_2_f1_whisper_L20.csv
+      hash: md5
+      md5: ce02d0f4cd617d0f18dc6f108bf4ee9f
+      size: 556
+    - path: data/section6_2_f1_xlsr_L12.csv
+      hash: md5
+      md5: 053df50d4a5d4de042944acda72ad489
+      size: 578
+    - path: data/section6_2_l1l2_accuracy.csv
+      hash: md5
+      md5: b589ad1d597ebb85b58a6f7efa90913c
+      size: 240
+    - path: data/section6_2_mcnemar.csv
+      hash: md5
+      md5: 4072a3c7b2d7eaa8a406a83f34d41b85
+      size: 236
+    - path: figures/fig_6_2_cm_acoustic.png
+      hash: md5
+      md5: 7deb09bb9e4cbd45de34d0164862519f
+      size: 77109
+    - path: figures/fig_6_2_cm_whisper_L20.png
+      hash: md5
+      md5: f6ac2d03ce800f221be5f6346f244600
+      size: 56313
+    - path: figures/fig_6_2_cm_xlsr_L12.png
+      hash: md5
+      md5: 110d05d9d2bb43a1b421d36194541790
+      size: 58119
+  analyse_7_lme:
+    cmd: pixi run python src/analyse_7_lme.py
+    deps:
+    - path: data/features_acoustic_norm.csv
+      hash: md5
+      md5: 6a591cc6c4f0d1b61f396369b3057c5d
+      size: 2386696
+    - path: data/features_neural_index.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+    - path: data/features_whisper_L20.npz
+      hash: md5
+      md5: c38ce09f4a29f6f94c12a79373774ae7
+      size: 30069010
+    - path: data/features_xlsr_L12.npz
+      hash: md5
+      md5: 400cc562fe3e81a6e2a692341ebc4cea
+      size: 30069010
+    - path: src/analyse_7_lme.py
+      hash: md5
+      md5: cb325f6b8ce7f9f84a10d47723e688b2
+      size: 8027
+    outs:
+    - path: data/section7_acoustic.csv
+      hash: md5
+      md5: 8a87c786d69db6a981e442d4d3ec3164
+      size: 4072
+    - path: data/section7_neural_whisper_L20.csv
+      hash: md5
+      md5: 58c9ad2acd340bd894423dc446a5b351
+      size: 2357
+    - path: data/section7_neural_xlsr_L12.csv
+      hash: md5
+      md5: 14b81c1117df490aea82562f0c566ef3
+      size: 2441
+  analyse_7_robust:
+    cmd: pixi run python src/analyse_7_robust.py
+    deps:
+    - path: data/features_acoustic_norm.csv
+      hash: md5
+      md5: 6a591cc6c4f0d1b61f396369b3057c5d
+      size: 2386696
+    - path: data/features_neural_index.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+    - path: data/features_whisper_L20.npz
+      hash: md5
+      md5: c38ce09f4a29f6f94c12a79373774ae7
+      size: 30069010
+    - path: data/features_xlsr_L12.npz
+      hash: md5
+      md5: 400cc562fe3e81a6e2a692341ebc4cea
+      size: 30069010
+    - path: src/analyse_7_robust.py
+      hash: md5
+      md5: 752bcdf1f02865171d662d46e41b8498
+      size: 6143
+    outs:
+    - path: data/section7_robust_acoustic.csv
+      hash: md5
+      md5: ee4c9c6e0bbb67de9be2d8a691c655a0
+      size: 656
+    - path: data/section7_robust_whisper_L20.csv
+      hash: md5
+      md5: 4cd56f4901dd6cdea32743eb5005c130
+      size: 1620
+    - path: data/section7_robust_xlsr_L12.csv
+      hash: md5
+      md5: 753889cc5557fefd9e7e743517fd161d
+      size: 1661
+  analyse_8:
+    cmd: pixi run python src/analyse_8_rope.py
+    deps:
+    - path: data/features_acoustic_norm.csv
+      hash: md5
+      md5: 6a591cc6c4f0d1b61f396369b3057c5d
+      size: 2386696
+    - path: data/features_neural_index.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+    - path: data/features_whisper_L20.npz
+      hash: md5
+      md5: c38ce09f4a29f6f94c12a79373774ae7
+      size: 30069010
+    - path: data/features_xlsr_L12.npz
+      hash: md5
+      md5: 400cc562fe3e81a6e2a692341ebc4cea
+      size: 30069010
+    - path: src/analyse_8_rope.py
+      hash: md5
+      md5: 9e34bdef38b9a04a5321260d8a3fdb05
+      size: 11028
+    outs:
+    - path: data/section8_acoustic_ci.csv
+      hash: md5
+      md5: c37b94a69629379179f9109c5d655235
+      size: 3953
+    - path: data/section8_acoustic_classified.csv
+      hash: md5
+      md5: 3bee523912c0f2908d11c8bb5d0deef6
+      size: 2258
+    - path: data/section8_neural_ci.csv
+      hash: md5
+      md5: 6a25870f12e1793fafd437710c34e504
+      size: 1942
+    - path: data/section8_neural_classified.csv
+      hash: md5
+      md5: fb77efca97a35d32d106278637e97503
+      size: 2663
+    - path: figures/fig_8_forest_acoustic.png
+      hash: md5
+      md5: 200cb90073dd40560d56fe8130f63892
+      size: 43666
+    - path: figures/fig_8_forest_neural.png
+      hash: md5
+      md5: e0a6970062a0e40bafc79c0f7af9eedf
+      size: 40711
+  analyse_9:
+    cmd: pixi run python src/analyse_9_clustering.py
+    deps:
+    - path: data/features_acoustic_norm.csv
+      hash: md5
+      md5: 6a591cc6c4f0d1b61f396369b3057c5d
+      size: 2386696
+    - path: data/features_neural_index.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+    - path: data/features_whisper_L20.npz
+      hash: md5
+      md5: c38ce09f4a29f6f94c12a79373774ae7
+      size: 30069010
+    - path: data/features_xlsr_L12.npz
+      hash: md5
+      md5: 400cc562fe3e81a6e2a692341ebc4cea
+      size: 30069010
+    - path: src/analyse_9_clustering.py
+      hash: md5
+      md5: 6b63af691de8364faf9070a83ab6340f
+      size: 10434
+    outs:
+    - path: data/section9_1_vowels.csv
+      hash: md5
+      md5: 2b38a214492241312cf5ce5ec6c15e68
+      size: 197
+    - path: data/section9_2_cv.csv
+      hash: md5
+      md5: 9ef4f8f97213fc34771e765ad9753a2c
+      size: 114
+    - path: data/section9_3_speakers.csv
+      hash: md5
+      md5: f357fda5df3c718795fef581729c65a9
+      size: 188
+    - path: data/section9_4_k.csv
+      hash: md5
+      md5: 66a5217688e5c046bad90591278d5d4b
+      size: 161
+    - path: figures/fig_9_1_dendro_acoustic_F1F2.png
+      hash: md5
+      md5: 40ee120284648877d842202d442e1097
+      size: 26243
+    - path: figures/fig_9_1_dendro_whisper_L20.png
+      hash: md5
+      md5: c921c1f9197de63c2a9429ef39d25d2f
+      size: 27965
+    - path: figures/fig_9_1_dendro_xlsr_L12.png
+      hash: md5
+      md5: 5b753275d0cfdf03a161a9ae77f671ce
+      size: 27521
+    - path: figures/fig_9_2_dendro_acoustic_extended.png
+      hash: md5
+      md5: f7c96c142d330fb7a0188b2fe3f4ca7d
+      size: 28127
+    - path: figures/fig_9_2_dendro_whisper_L20.png
+      hash: md5
+      md5: fea58e07e0e6b9edfaf07288560add8d
+      size: 29814
+    - path: figures/fig_9_2_dendro_xlsr_L12.png
+      hash: md5
+      md5: 80acd345023eb999113bee3a4ae1aab4
+      size: 31593
+    - path: figures/fig_9_3_dendro_acoustic.png
+      hash: md5
+      md5: e60b9065586220373386a22aac74d67d
+      size: 32758
+    - path: figures/fig_9_3_dendro_whisper_L20.png
+      hash: md5
+      md5: 6059392c342850ff2d104db86ff453ec
+      size: 36623
+    - path: figures/fig_9_3_dendro_xlsr_L12.png
+      hash: md5
+      md5: 88e1dda905067fda64143369bd88dd9e
+      size: 35061
+    - path: figures/fig_9_4_silhouette.png
+      hash: md5
+      md5: de1c56d0b5cb086773af6d95f00d5f40
+      size: 40061
