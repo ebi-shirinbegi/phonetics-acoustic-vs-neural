@@ -222,8 +222,7 @@ stages:
       - figures/fig_9_3_dendro_whisper_L20.png
       - figures/fig_9_3_dendro_xlsr_L12.png
       - figures/fig_9_4_silhouette.png
-
-audit:
+  audit:
     cmd: pixi run python src/analyse_audit.py
     deps:
       - src/analyse_audit.py

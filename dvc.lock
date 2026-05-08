@@ -666,3 +666,71 @@ stages:
       hash: md5
       md5: de1c56d0b5cb086773af6d95f00d5f40
       size: 40061
+  audit:
+    cmd: pixi run python src/analyse_audit.py
+    deps:
+    - path: data/features_acoustic_norm.csv
+      hash: md5
+      md5: 6a591cc6c4f0d1b61f396369b3057c5d
+      size: 2386696
+    - path: data/features_neural_index.csv
+      hash: md5
+      md5: 0ac627de41deb2c2a1ff50e68a56d763
+      size: 1053530
+    - path: data/features_whisper_L20.npz
+      hash: md5
+      md5: c38ce09f4a29f6f94c12a79373774ae7
+      size: 30069010
+    - path: data/features_xlsr_L12.npz
+      hash: md5
+      md5: 400cc562fe3e81a6e2a692341ebc4cea
+      size: 30069010
+    - path: data/section6_1_acoustic.csv
+      hash: md5
+      md5: 45e399e0af85b5e7c3070a946a549ad6
+      size: 2630
+    - path: data/section6_2_cm_acoustic.csv
+      hash: md5
+      md5: e4809bdbe4ff293371cc1f29bbcd95a6
+      size: 300
+    - path: data/section6_2_cm_whisper_L20.csv
+      hash: md5
+      md5: 7a442a15f144103b18711bd75aea87dc
+      size: 270
+    - path: data/section6_2_cm_xlsr_L12.csv
+      hash: md5
+      md5: 8a2571ccdbbc0bb83233434655555a5a
+      size: 271
+    - path: data/section8_acoustic_classified.csv
+      hash: md5
+      md5: 3bee523912c0f2908d11c8bb5d0deef6
+      size: 2258
+    - path: src/analyse_audit.py
+      hash: md5
+      md5: afd5dbb729309510297034272e4991bd
+      size: 13595
+    outs:
+    - path: data/audit_aic_bic.csv
+      hash: md5
+      md5: ff70ac0893417e5e70407f72a1486655
+      size: 942
+    - path: data/audit_icc_a.csv
+      hash: md5
+      md5: 5e20e1a95a804ff3ed20467463c03702
+      size: 140
+    - path: data/audit_missingness.csv
+      hash: md5
+      md5: 7c80dd226427e3e6ec6d46fd9cd5f04c
+      size: 7421
+    - path: data/audit_q11.csv
+      hash: md5
+      md5: 766ed8af4010c79cfaee36dd1064ccdc
+      size: 1622
+    - path: data/audit_q16.csv
+      hash: md5
+      md5: c08d1348d83fd7b46523bfaecfa9d4ed
+      size: 846
+    - path: data/audit_trajectory.csv
+      hash: md5
+      md5: aa6c7e645b3d612f641ff8866a4b22ff
+      size: 1814
