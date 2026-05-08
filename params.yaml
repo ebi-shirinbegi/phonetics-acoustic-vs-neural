@@ -1,0 +1,32 @@
+# Tunable parameters for the pipeline. DVC tracks this file so that
+# changing any value invalidates the affected stages.
+
+acoustic:
+  max_formant_female_hz: 5000
+  max_formant_male_hz: 4500
+  n_formants: 5
+  trajectory_threshold_s: 0.080
+
+neural:
+  whisper_model: openai/whisper-medium
+  xlsr_model: facebook/wav2vec2-large-xlsr-53
+  whisper_layers: [6, 20]
+  xlsr_layers: [3, 12, 20]
+  target_sample_rate: 16000
+
+normalisation:
+  pca_dims: [2, 50]
+  umap_dims: 2
+  umap_n_neighbors: 30
+  umap_min_dist: 0.1
+  umap_metric: cosine
+
+statistics:
+  fdr_method: fdr_bh
+  alpha: 0.05
+  bootstrap_n: 2000
+  permutation_n: 5000
+
+rope:
+  acoustic_jnd_hz: 20
+  neural_delta: intra_speaker_mean_cosine_distance

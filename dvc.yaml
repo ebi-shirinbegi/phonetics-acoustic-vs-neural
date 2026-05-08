@@ -1,3 +1,5 @@
+params:
+  - params.yaml
 stages:
   parse:
     cmd: pixi run python src/parse_corpus.py
@@ -220,3 +222,24 @@ stages:
       - figures/fig_9_3_dendro_whisper_L20.png
       - figures/fig_9_3_dendro_xlsr_L12.png
       - figures/fig_9_4_silhouette.png
+
+audit:
+    cmd: pixi run python src/analyse_audit.py
+    deps:
+      - src/analyse_audit.py
+      - data/features_acoustic_norm.csv
+      - data/features_neural_index.csv
+      - data/features_whisper_L20.npz
+      - data/features_xlsr_L12.npz
+      - data/section6_1_acoustic.csv
+      - data/section6_2_cm_acoustic.csv
+      - data/section6_2_cm_whisper_L20.csv
+      - data/section6_2_cm_xlsr_L12.csv
+      - data/section8_acoustic_classified.csv
+    outs:
+      - data/audit_trajectory.csv
+      - data/audit_missingness.csv
+      - data/audit_icc_a.csv
+      - data/audit_aic_bic.csv
+      - data/audit_q11.csv
+      - data/audit_q16.csv
