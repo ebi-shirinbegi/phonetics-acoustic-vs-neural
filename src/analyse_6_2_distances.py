@@ -10,6 +10,10 @@ from scipy.stats import spearmanr
 from sklearn.metrics.pairwise import cosine_distances
 from statsmodels.stats.contingency_tables import mcnemar
 
+from _params import load_params
+_PARAMS = load_params()
+BOOTSTRAP_N = _PARAMS["statistics"]["bootstrap_n"]
+
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 FIG = ROOT / "figures"
@@ -74,28 +78,43 @@ def pooled_inv_cov(df, vowels):
     return np.linalg.inv(cov)
 
 
-def bootstrap_pair_distance(data, index, v1, v2, kind, n_boot=2000, seed=0):
+def bootstrap_pair_distance(data, index, v1, v2, kind, n_boot=BOOTSTRAP_N, seed=0):
+    """Speaker-level cluster bootstrap. Each iteration samples speakers
+    with replacement; if a speaker is sampled k times, that speaker's
+    tokens contribute k copies (preserved via index-based concatenation,
+    not isin filtering)."""
     rng = np.random.default_rng(seed)
+
     if kind == "acoustic":
         speakers = data["speaker"].unique()
+        # Pre-index tokens by speaker for fast lookup
+        spk_to_idx = {s: data.index[data["speaker"] == s].to_numpy()
+                      for s in speakers}
     else:
         speakers = index["speaker"].unique()
+        spk_to_idx = {s: index.index[index["speaker"] == s].to_numpy()
+                      for s in speakers}
+
     boot_d = []
     for _ in range(n_boot):
         sample = rng.choice(speakers, size=len(speakers), replace=True)
+        # Build the resampled token index by concatenating each chosen
+        # speaker's row indices once per draw (so duplicates are preserved).
+        idx_pieces = [spk_to_idx[s] for s in sample]
+        boot_idx = np.concatenate(idx_pieces)
+
         if kind == "acoustic":
-            sub = data[data["speaker"].isin(sample)]
+            sub = data.loc[boot_idx]
             s1 = sub[sub["phoneme"] == v1][["F1_lobanov", "F2_lobanov"]].dropna()
             s2 = sub[sub["phoneme"] == v2][["F1_lobanov", "F2_lobanov"]].dropna()
             if len(s1) < 3 or len(s2) < 3:
                 continue
             d = float(np.linalg.norm(s1.mean(axis=0) - s2.mean(axis=0)))
         else:
-            spk = index["speaker"].to_numpy()
             phn = index["phoneme"].to_numpy()
-            spk_mask = np.isin(spk, sample)
-            e1 = data[spk_mask & (phn == v1)]
-            e2 = data[spk_mask & (phn == v2)]
+            sub_phn = phn[boot_idx]
+            e1 = data[boot_idx[sub_phn == v1]]
+            e2 = data[boot_idx[sub_phn == v2]]
             if len(e1) < 3 or len(e2) < 3:
                 continue
             d = float(cosine_distances(e1.mean(axis=0, keepdims=True),

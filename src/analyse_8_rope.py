@@ -24,7 +24,10 @@ FIG = ROOT / "figures"
 FIG.mkdir(exist_ok=True)
 
 ORAL_VOWELS = ["i", "e", "ɛ", "a", "ɑ", "o", "u", "y", "ø", "ə"]
-N_BOOT = 2000
+from _params import load_params
+_PARAMS = load_params()
+N_BOOT = _PARAMS["statistics"]["bootstrap_n"]
+ACOUSTIC_JND_HZ = _PARAMS["rope"]["acoustic_jnd_hz"]
 
 
 def add_design(df):
@@ -76,6 +79,13 @@ def neural_centroid_distance(emb, mask_l1, mask_l2):
     c1 = emb[mask_l1].mean(axis=0, keepdims=True)
     c2 = emb[mask_l2].mean(axis=0, keepdims=True)
     return float(cosine_distances(c1, c2)[0, 0])
+def neural_centroid_distance_idx(emb, idx_l1, idx_l2):
+    """Cosine distance between centroids defined by token-row indices."""
+    if len(idx_l1) == 0 or len(idx_l2) == 0:
+        return float("nan")
+    c1 = emb[idx_l1].mean(axis=0, keepdims=True)
+    c2 = emb[idx_l2].mean(axis=0, keepdims=True)
+    return float(cosine_distances(c1, c2)[0, 0])
 
 
 def bootstrap_neural_l1l2(emb, index, layer_name, vowels=ORAL_VOWELS,
@@ -95,14 +105,23 @@ def bootstrap_neural_l1l2(emb, index, layer_name, vowels=ORAL_VOWELS,
         obs = neural_centroid_distance(emb,
                                        v_mask & (L1 == "fr"),
                                        v_mask & (L1 == "ru"))
-        # Bootstrap on speakers
+        # Pre-index tokens by speaker for proper resample-with-replacement
+        spk_to_idx = {s: np.where(spk_arr == s)[0] for s in speakers}
         boot = []
         for _ in range(n_boot):
             sample = rng.choice(speakers, size=len(speakers), replace=True)
-            spk_mask = np.isin(spk_arr, sample)
-            d = neural_centroid_distance(emb,
-                                         v_mask & spk_mask & (L1 == "fr"),
-                                         v_mask & spk_mask & (L1 == "ru"))
+            boot_idx = np.concatenate([spk_to_idx[s] for s in sample])
+            # Build masks restricted to the resampled token indices
+            in_boot = np.zeros(len(emb), dtype=bool)
+            # Some indices may repeat: this still gives all the duplicate
+            # rows when we select with boot_idx directly below.
+            v_phon = phon[boot_idx]
+            v_l1 = L1[boot_idx]
+            v_in_phon = (v_phon == v)
+            d = neural_centroid_distance_idx(
+                emb, boot_idx[v_in_phon & (v_l1 == "fr")],
+                boot_idx[v_in_phon & (v_l1 == "ru")],
+            )
             if not np.isnan(d):
                 boot.append(d)
         boot = np.array(boot)
@@ -126,7 +145,7 @@ def acoustic_rope_lobanov(df):
     mean per-speaker SD of F1."""
     sds = df.groupby("speaker")["F1_mid"].std(ddof=1).dropna()
     mean_sd = sds.mean()
-    delta = 20.0 / mean_sd
+    delta = ACOUSTIC_JND_HZ / mean_sd
     print(f"  Mean per-speaker SD of F1 (Hz): {mean_sd:.1f}")
     print(f"  Acoustic ROPE on Lobanov scale: +/- {delta:.3f}")
     return -delta, delta

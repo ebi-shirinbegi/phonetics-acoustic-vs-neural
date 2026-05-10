@@ -21,9 +21,12 @@ ROOT = Path(__file__).resolve().parent.parent
 IN_PATH = ROOT / "data" / "features_phonemes_clean.csv"
 OUT_PATH = ROOT / "data" / "features_acoustic.csv"
 
-MAX_FORMANT_F = 5000.0
-MAX_FORMANT_M = 4500.0
-N_FORMANTS = 5
+from _params import load_params
+
+_PARAMS = load_params()
+MAX_FORMANT_F = float(_PARAMS["acoustic"]["max_formant_female_hz"])
+MAX_FORMANT_M = float(_PARAMS["acoustic"]["max_formant_male_hz"])
+N_FORMANTS = int(_PARAMS["acoustic"]["n_formants"])
 TRAJECTORY_THRESHOLD_S = 0.080
 
 

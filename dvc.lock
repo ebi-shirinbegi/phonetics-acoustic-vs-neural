@@ -49,10 +49,21 @@ stages:
       hash: md5
       md5: 0ac627de41deb2c2a1ff50e68a56d763
       size: 1053530
+    - path: src/_params.py
+      hash: md5
+      md5: ebd4e27a139f589f19681cb08fd43141
+      size: 475
     - path: src/extract_acoustics.py
       hash: md5
-      md5: 93ebb62f5ee6e019a900096ce2a373a9
-      size: 4837
+      md5: daed16309e9fe7c8865315ff30a97355
+      size: 5019
+    params:
+      params.yaml:
+        acoustic:
+          max_formant_female_hz: 5000
+          max_formant_male_hz: 4500
+          n_formants: 5
+          trajectory_threshold_s: 0.08
     outs:
     - path: data/features_acoustic.csv
       hash: md5
@@ -373,10 +384,21 @@ stages:
       hash: md5
       md5: 400cc562fe3e81a6e2a692341ebc4cea
       size: 30069010
+    - path: src/_params.py
+      hash: md5
+      md5: ebd4e27a139f589f19681cb08fd43141
+      size: 475
     - path: src/analyse_6_1_groups.py
       hash: md5
-      md5: a343870a8678be0543ca1f0dc009ca19
-      size: 5929
+      md5: 5299fa2bd95af69e646ce39f8a437aff
+      size: 7798
+    params:
+      params.yaml:
+        statistics:
+          fdr_method: fdr_bh
+          alpha: 0.05
+          bootstrap_n: 2000
+          permutation_n: 5000
     outs:
     - path: data/section6_1_acoustic.csv
       hash: md5
@@ -388,8 +410,8 @@ stages:
       size: 2203
     - path: data/section6_1_neural.csv
       hash: md5
-      md5: 135f0b5036e9ddb6f0df8d6a64e10c3a
-      size: 1683
+      md5: dcc525332957b6946c8208dcc2451130
+      size: 1829
   analyse_6_2:
     cmd: pixi run python src/analyse_6_2_distances.py
     deps:
@@ -409,15 +431,26 @@ stages:
       hash: md5
       md5: 400cc562fe3e81a6e2a692341ebc4cea
       size: 30069010
+    - path: src/_params.py
+      hash: md5
+      md5: ebd4e27a139f589f19681cb08fd43141
+      size: 475
     - path: src/analyse_6_2_distances.py
       hash: md5
-      md5: 93ae190498dc66f45a8194a06d15ab15
-      size: 11470
+      md5: 754ef6e61305027c5ee115cd1f2c2a55
+      size: 12286
+    params:
+      params.yaml:
+        statistics:
+          fdr_method: fdr_bh
+          alpha: 0.05
+          bootstrap_n: 2000
+          permutation_n: 5000
     outs:
     - path: data/section6_2_bootstrap.csv
       hash: md5
-      md5: 1510facb9da54e6f11ec9a0259712148
-      size: 903
+      md5: 1bf48479d66bb82bb173f4612b47bf6a
+      size: 901
     - path: data/section6_2_cm_acoustic.csv
       hash: md5
       md5: e4809bdbe4ff293371cc1f29bbcd95a6
@@ -557,10 +590,24 @@ stages:
       hash: md5
       md5: 400cc562fe3e81a6e2a692341ebc4cea
       size: 30069010
+    - path: src/_params.py
+      hash: md5
+      md5: ebd4e27a139f589f19681cb08fd43141
+      size: 475
     - path: src/analyse_8_rope.py
       hash: md5
-      md5: 9e34bdef38b9a04a5321260d8a3fdb05
-      size: 11028
+      md5: 290db667d9133167093e4a3f11336fd4
+      size: 12007
+    params:
+      params.yaml:
+        rope:
+          acoustic_jnd_hz: 20
+          neural_delta: intra_speaker_mean_cosine_distance
+        statistics:
+          fdr_method: fdr_bh
+          alpha: 0.05
+          bootstrap_n: 2000
+          permutation_n: 5000
     outs:
     - path: data/section8_acoustic_ci.csv
       hash: md5
@@ -572,20 +619,20 @@ stages:
       size: 2258
     - path: data/section8_neural_ci.csv
       hash: md5
-      md5: 6a25870f12e1793fafd437710c34e504
-      size: 1942
+      md5: f1eabffb1c432956b220dc19f04a59d0
+      size: 1938
     - path: data/section8_neural_classified.csv
       hash: md5
-      md5: fb77efca97a35d32d106278637e97503
-      size: 2663
+      md5: 7a90eaa5454e1a7d47ee8fee4c6ec7c1
+      size: 2659
     - path: figures/fig_8_forest_acoustic.png
       hash: md5
       md5: 200cb90073dd40560d56fe8130f63892
       size: 43666
     - path: figures/fig_8_forest_neural.png
       hash: md5
-      md5: e0a6970062a0e40bafc79c0f7af9eedf
-      size: 40711
+      md5: 54b29f05c89feb86055cde30dbe14bfc
+      size: 40700
   analyse_9:
     cmd: pixi run python src/analyse_9_clustering.py
     deps:
